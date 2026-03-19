@@ -287,6 +287,183 @@ pub fn echo_ok_handler() -> Handler {
                     },
                 ))
             }
+            Some(proto::client_originated_message::Submessage::InjectRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::InjectResponse(
+                    proto::InjectResponse {
+                        status: vec![proto::inject_response::Status::Ok as i32],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::RestartSessionRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::RestartSessionResponse(
+                    proto::RestartSessionResponse {
+                        status: Some(proto::restart_session_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::GetPromptRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::GetPromptResponse(
+                    proto::GetPromptResponse {
+                        status: Some(proto::get_prompt_response::Status::Ok as i32),
+                        prompt_range: None,
+                        command_range: None,
+                        output_range: None,
+                        working_directory: Some("/tmp".to_string()),
+                        command: Some("ls".to_string()),
+                        prompt_state: Some(proto::get_prompt_response::State::Finished as i32),
+                        exit_status: Some(0),
+                        unique_prompt_id: Some("prompt-1".to_string()),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::ListProfilesRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::ListProfilesResponse(
+                    proto::ListProfilesResponse {
+                        profiles: vec![proto::list_profiles_response::Profile {
+                            properties: vec![proto::ProfileProperty {
+                                key: Some("Name".to_string()),
+                                json_value: Some(r#""Default""#.to_string()),
+                            }],
+                        }],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::ColorPresetRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::ColorPresetResponse(
+                    proto::ColorPresetResponse {
+                        response: Some(proto::color_preset_response::Response::ListPresets(
+                            proto::color_preset_response::ListPresets {
+                                name: vec!["Solarized Dark".to_string(), "Tango Dark".to_string()],
+                            },
+                        )),
+                        status: Some(proto::color_preset_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::SavedArrangementRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::SavedArrangementResponse(
+                    proto::SavedArrangementResponse {
+                        status: Some(proto::saved_arrangement_response::Status::Ok as i32),
+                        names: vec!["Default".to_string(), "Work".to_string()],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::GetBroadcastDomainsRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::GetBroadcastDomainsResponse(
+                    proto::GetBroadcastDomainsResponse {
+                        broadcast_domains: vec![proto::BroadcastDomain {
+                            session_ids: vec!["s1".to_string(), "s2".to_string()],
+                        }],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::MenuItemRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::MenuItemResponse(
+                    proto::MenuItemResponse {
+                        status: Some(proto::menu_item_response::Status::Ok as i32),
+                        checked: Some(false),
+                        enabled: Some(true),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::ListPromptsRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::ListPromptsResponse(
+                    proto::ListPromptsResponse {
+                        status: Some(proto::list_prompts_response::Status::Ok as i32),
+                        unique_prompt_id: vec!["p1".to_string(), "p2".to_string()],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::SelectionRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::SelectionResponse(
+                    proto::SelectionResponse {
+                        status: Some(proto::selection_response::Status::Ok as i32),
+                        response: Some(proto::selection_response::Response::GetSelectionResponse(
+                            proto::selection_response::GetSelectionResponse {
+                                selection: Some(proto::Selection {
+                                    sub_selections: vec![],
+                                }),
+                            },
+                        )),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::SetBroadcastDomainsRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::SetBroadcastDomainsResponse(
+                    proto::SetBroadcastDomainsResponse {
+                        status: Some(proto::set_broadcast_domains_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::TmuxRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::TmuxResponse(
+                    proto::TmuxResponse {
+                        payload: Some(proto::tmux_response::Payload::ListConnections(
+                            proto::tmux_response::ListConnections {
+                                connections: vec![],
+                            },
+                        )),
+                        status: Some(proto::tmux_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::ReorderTabsRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::ReorderTabsResponse(
+                    proto::ReorderTabsResponse {
+                        status: Some(proto::reorder_tabs_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::PreferencesRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::PreferencesResponse(
+                    proto::PreferencesResponse {
+                        results: vec![proto::preferences_response::Result {
+                            result: Some(proto::preferences_response::result::Result::GetPreferenceResult(
+                                proto::preferences_response::result::GetPreferenceResult {
+                                    json_value: Some(r#""value""#.to_string()),
+                                },
+                            )),
+                        }],
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::RegisterToolRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::RegisterToolResponse(
+                    proto::RegisterToolResponse {
+                        status: Some(proto::register_tool_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::StatusBarComponentRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::StatusBarComponentResponse(
+                    proto::StatusBarComponentResponse {
+                        status: Some(proto::status_bar_component_response::Status::Ok as i32),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::InvokeFunctionRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::InvokeFunctionResponse(
+                    proto::InvokeFunctionResponse {
+                        disposition: Some(proto::invoke_function_response::Disposition::Success(
+                            proto::invoke_function_response::Success {
+                                json_result: Some(r#""ok""#.to_string()),
+                            },
+                        )),
+                    },
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::ServerOriginatedRpcResultRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::ServerOriginatedRpcResultResponse(
+                    proto::ServerOriginatedRpcResultResponse {},
+                ))
+            }
+            Some(proto::client_originated_message::Submessage::SetTabLayoutRequest(_)) => {
+                Some(proto::server_originated_message::Submessage::SetTabLayoutResponse(
+                    proto::SetTabLayoutResponse {
+                        status: Some(proto::set_tab_layout_response::Status::Ok as i32),
+                    },
+                ))
+            }
             _ => None,
         };
 

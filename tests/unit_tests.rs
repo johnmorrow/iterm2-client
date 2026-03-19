@@ -6,3 +6,6 @@ mod connection_tests;
 
 #[path = "unit/high_level_tests.rs"]
 mod high_level_tests;
+
+#[path = "unit/notification_tests.rs"]
+mod notification_tests;
