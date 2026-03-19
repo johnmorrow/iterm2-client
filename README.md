@@ -11,8 +11,8 @@ use iterm2_client::{App, Connection};
 
 #[tokio::main]
 async fn main() -> iterm2_client::Result<()> {
-    // Connect to iTerm2 (reads ITERM2_COOKIE/ITERM2_KEY from env,
-    // falls back to osascript)
+    // Connect to iTerm2 via Unix socket (reads ITERM2_COOKIE/ITERM2_KEY
+    // from env, falls back to osascript)
     let conn = Connection::connect("my-app").await?;
     let app = App::new(conn);
 

@@ -1,8 +1,8 @@
 //! WebSocket transport for connecting to iTerm2.
 //!
-//! Supports TCP (`ws://localhost:1912`) and Unix socket connections.
-//! Use `connect` for the default TCP transport, or `connect_unix` for the
-//! Unix domain socket.
+//! Supports Unix socket (default) and legacy TCP (`ws://localhost:1912`) connections.
+//! Use `connect` for the default Unix socket transport, or `connect_tcp` for
+//! legacy TCP connections.
 
 use crate::auth::Credentials;
 use crate::error::{Error, Result};
@@ -68,15 +68,16 @@ where
     Ok(ws_stream.split())
 }
 
-/// Connect to iTerm2 using the default TCP transport.
+/// Connect to iTerm2 using the default Unix socket transport.
+///
+/// iTerm2 only serves its API over a Unix domain socket at
+/// `~/Library/Application Support/iTerm2/private/socket`.
+/// TCP on port 1912 is legacy and no longer served.
 pub async fn connect(
     credentials: &Credentials,
     app_name: &str,
-) -> Result<(
-    WsSink<MaybeTlsStream<tokio::net::TcpStream>>,
-    WsSource<MaybeTlsStream<tokio::net::TcpStream>>,
-)> {
-    connect_tcp(credentials, app_name).await
+) -> Result<(WsSink<tokio::net::UnixStream>, WsSource<tokio::net::UnixStream>)> {
+    connect_unix(credentials, app_name).await
 }
 
 fn make_header_value(value: &str, field_name: &str) -> Result<HeaderValue> {
@@ -102,7 +103,7 @@ fn apply_headers(
     );
     headers.insert(
         "x-iterm2-library-version",
-        HeaderValue::from_static(concat!("rust ", "0.1.0")),
+        HeaderValue::from_static(concat!("rust ", "0.2.0")),
     );
     headers.insert(
         "x-iterm2-cookie",

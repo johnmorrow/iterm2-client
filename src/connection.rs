@@ -54,44 +54,42 @@ impl<S> Clone for Connection<S> {
 }
 
 impl Connection<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>> {
-    /// Connect to iTerm2 over TCP, resolving credentials automatically.
+    /// Connect to iTerm2 over legacy TCP at `ws://localhost:1912`.
+    ///
+    /// Modern iTerm2 no longer serves TCP — prefer [`Connection::connect`] instead.
     pub async fn connect_tcp(app_name: &str) -> Result<Self> {
         let credentials = auth::resolve_credentials(app_name, &OsascriptRunner)?;
         let (sink, source) = transport::connect_tcp(&credentials, app_name).await?;
         Ok(Self::from_split(sink, source))
     }
+
+    /// Connect to iTerm2 over legacy TCP with pre-resolved credentials.
+    pub async fn connect_tcp_with_credentials(
+        app_name: &str,
+        credentials: &Credentials,
+    ) -> Result<Self> {
+        let (sink, source) = transport::connect_tcp(credentials, app_name).await?;
+        Ok(Self::from_split(sink, source))
+    }
 }
 
 impl Connection<tokio::net::UnixStream> {
-    /// Connect to iTerm2 over Unix socket, resolving credentials automatically.
-    pub async fn connect_unix(app_name: &str) -> Result<Self> {
+    /// Connect to iTerm2, resolving credentials automatically.
+    ///
+    /// Connects via Unix domain socket at
+    /// `~/Library/Application Support/iTerm2/private/socket`, which is the
+    /// only transport modern iTerm2 serves. For legacy TCP connections, use
+    /// [`Connection::connect_tcp`].
+    pub async fn connect(app_name: &str) -> Result<Self> {
         let credentials = auth::resolve_credentials(app_name, &OsascriptRunner)?;
         let (sink, source) = transport::connect_unix(&credentials, app_name).await?;
         Ok(Self::from_split(sink, source))
     }
 
-    /// Connect to iTerm2 over Unix socket with pre-resolved credentials.
-    pub async fn connect_unix_with_credentials(
-        app_name: &str,
-        credentials: &Credentials,
-    ) -> Result<Self> {
-        let (sink, source) = transport::connect_unix(credentials, app_name).await?;
-        Ok(Self::from_split(sink, source))
-    }
-}
-
-impl Connection<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>> {
-    /// Connect to iTerm2, resolving credentials automatically.
-    ///
-    /// Tries the Unix socket first (`~/Library/Application Support/iTerm2/private/socket`),
-    /// then falls back to TCP (`ws://localhost:1912`). Since the two transports produce
-    /// different generic types, this method converts a successful Unix connection into
-    /// a TCP-typed connection by reconnecting over TCP. For direct Unix socket access,
-    /// use [`Connection::connect_unix`].
-    pub async fn connect(app_name: &str) -> Result<Self> {
+    /// Connect to iTerm2 over Unix socket, resolving credentials automatically.
+    pub async fn connect_unix(app_name: &str) -> Result<Self> {
         let credentials = auth::resolve_credentials(app_name, &OsascriptRunner)?;
-        // Try TCP (most common for external scripts)
-        let (sink, source) = transport::connect_tcp(&credentials, app_name).await?;
+        let (sink, source) = transport::connect_unix(&credentials, app_name).await?;
         Ok(Self::from_split(sink, source))
     }
 
@@ -101,16 +99,16 @@ impl Connection<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>> {
         runner: &dyn AppleScriptRunner,
     ) -> Result<Self> {
         let credentials = auth::resolve_credentials(app_name, runner)?;
-        let (sink, source) = transport::connect_tcp(&credentials, app_name).await?;
+        let (sink, source) = transport::connect_unix(&credentials, app_name).await?;
         Ok(Self::from_split(sink, source))
     }
 
-    /// Connect to iTerm2 over TCP with pre-resolved credentials.
+    /// Connect to iTerm2 over Unix socket with pre-resolved credentials.
     pub async fn connect_with_credentials(
         app_name: &str,
         credentials: &Credentials,
     ) -> Result<Self> {
-        let (sink, source) = transport::connect_tcp(credentials, app_name).await?;
+        let (sink, source) = transport::connect_unix(credentials, app_name).await?;
         Ok(Self::from_split(sink, source))
     }
 }

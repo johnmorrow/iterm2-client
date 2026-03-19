@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 (2026-03-19)
+
+### Breaking changes
+
+- **`Connection::connect()` now uses Unix socket instead of TCP.** Modern iTerm2 only serves its API over a Unix domain socket (`~/Library/Application Support/iTerm2/private/socket`); TCP port 1912 is legacy and no longer active. This means `connect()` now returns `Connection<UnixStream>` instead of `Connection<MaybeTlsStream<TcpStream>>`.
+- `connect_with_runner()` and `connect_with_credentials()` now use Unix socket transport.
+- The previous TCP credential method has been renamed to `connect_tcp_with_credentials()`.
+
+### Migration
+
+If you were using `Connection::connect()` with no transport-specific code, **no changes needed** — it will now work out of the box with iTerm2.
+
+If you explicitly need TCP (e.g., connecting to a proxy), use `Connection::connect_tcp()` instead.
+
 ## 0.1.0 (2026-03-19)
 
 Initial release.
