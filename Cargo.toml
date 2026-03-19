@@ -1,0 +1,20 @@
+[package]
+name = "iterm2-client"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Rust client for the iTerm2 scripting API"
+license = "MIT"
+
+[dependencies]
+futures-util = "0.3"
+prost = "0.13"
+thiserror = "2"
+tokio = { version = "1", features = ["net", "process", "sync", "time", "rt-multi-thread", "macros", "io-util"] }
+tokio-tungstenite = "0.26"
+
+[build-dependencies]
+prost-build = "0.13"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
