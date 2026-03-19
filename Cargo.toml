@@ -3,8 +3,13 @@ name = "iterm2-client"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.75"
-description = "Rust client for the iTerm2 scripting API"
+description = "Rust client for the iTerm2 scripting API (WebSocket + Protobuf)"
 license = "GPL-2.0-only"
+repository = "https://github.com/johnmorrow/iterm2-client"
+homepage = "https://github.com/johnmorrow/iterm2-client"
+keywords = ["iterm2", "terminal", "macos", "websocket", "protobuf"]
+categories = ["api-bindings", "os::macos-apis"]
+readme = "README.md"
 
 [dependencies]
 futures-util = "0.3"
